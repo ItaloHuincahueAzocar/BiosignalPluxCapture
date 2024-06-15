@@ -27,8 +27,8 @@ public class BiosignalPluxCaptureConfigurationDialog extends JDialog implements 
     ProjectOrganization org;
 
     JCheckBox EMG;
-//    JCheckBox ECG;
-//    JCheckBox EDA;
+    JCheckBox EDA;
+
     public int sensor_rec;
     int SR;
     ResourceBundle dialogBundle = java.util.ResourceBundle.getBundle("properties/principal");
@@ -42,35 +42,6 @@ public class BiosignalPluxCaptureConfigurationDialog extends JDialog implements 
     public BiosignalPluxCaptureConfigurationDialog(ProjectOrganization organization) {
         super(null, "BiosignalPlux Capture Configuration", Dialog.ModalityType.APPLICATION_MODAL);
         org = organization;
-    }
-
-    @Override
-    public void insertUpdate(DocumentEvent e) {
-        updateState();
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent e) {
-        updateState();
-    }
-
-    @Override
-    public void changedUpdate(DocumentEvent e) {
-        updateState();
-    }
-
-    private void updateState() {
-        if (nameField.getText().isEmpty()) {
-            errorLabel.setText(dialogBundle.getString("name"));
-            accept.setEnabled(false);
-//        } else if (!ECG.isSelected() && !EMG.isSelected() && !EDA.isSelected()) {
-        } else if (!EMG.isSelected()) {
-            errorLabel.setText(dialogBundle.getString("sensor"));
-            accept.setEnabled(false);
-        } else {
-            errorLabel.setText("");
-            accept.setEnabled(true);
-        }
     }
 
     public String getConfigurationName() {
@@ -101,18 +72,30 @@ public class BiosignalPluxCaptureConfigurationDialog extends JDialog implements 
         srValue = new JLabel("100");
 
         EMG = new JCheckBox();
+        EDA = new JCheckBox();
+
         JLabel sen_emg = new JLabel("EMG");
+        JLabel sen_eda = new JLabel("EDA");
 
         JLabel sensores = new JLabel(dialogBundle.getString("sens"));
         gbc.gx(0).gy(0).f(GridBConstraints.HORIZONTAL).a(GridBConstraints.FIRST_LINE_START).i(new Insets(5, 5, 5, 5));
         add(label, gbc);
-        add(nameField, gbc.gx(2).wx(1).gw(6));
-        add(sensores, gbc.gy(2).gx(0));
-        add(sen_emg, gbc.gy(2).gx(3).gw(1));
-        add(EMG, gbc.gy(2).gx(4).gw(1));
+
+        add(nameField, gbc.gx(1).wx(1).gw(5));
+
+        add(sensores, gbc.gx(0).gy(2)); //gy(2).gx(0));
+        //add(sen_emg, gbc.gy(2).gx(1).gw(1));
+        add(sen_emg, gbc.gy(2).gx(1).gw(1));
+        add(EMG, gbc.gy(2).gx(2).gw(1));
+
+        add(sen_eda, gbc.gy(2).gx(3).gw(1));
+        add(EDA, gbc.gy(2).gx(4).gw(1));
+
         add(samplerate, gbc.gy(4).gx(0));
-        add(srValue, gbc.gx(2).gy(4).wx(1).gw(1));
+        add(srValue, gbc.gx(1).gy(4).wx(1).gw(1));
         add(sSR, gbc.gy(6).wx(1).gw(6));
+
+        System.out.println("Ventana done");
 
         sSR.addChangeListener(new ChangeListener() {
             @Override
@@ -122,6 +105,13 @@ public class BiosignalPluxCaptureConfigurationDialog extends JDialog implements 
         });
 
         EMG.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateState();
+                System.out.println("Update State");
+            }
+        });
+        EDA.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateState();
@@ -137,15 +127,16 @@ public class BiosignalPluxCaptureConfigurationDialog extends JDialog implements 
         accept.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if ( EMG.isSelected()) {
+                if ( EMG.isSelected() || EDA.isSelected()) {
                     accepted = true;
                     setVisible(false);
                     sensor_rec = 0;
-                    
                     if (EMG.isSelected()) {
                         sensor_rec = sensor_rec + 10;
                     }
-                   
+                    if (EDA.isSelected()) {
+                        sensor_rec = sensor_rec + 100;
+                    }
                     SR = sSR.getValue();
                     dispose();
                 }
@@ -163,6 +154,35 @@ public class BiosignalPluxCaptureConfigurationDialog extends JDialog implements 
         setVisible(true);
 
         return accepted;
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        updateState();
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        updateState();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        updateState();
+    }
+
+    private void updateState() {
+        if (nameField.getText().isEmpty()) {
+            errorLabel.setText(dialogBundle.getString("name"));
+            accept.setEnabled(false);
+//        } else if (!ECG.isSelected() && !EMG.isSelected() && !EDA.isSelected()) {
+        } else if (!EMG.isSelected()) {
+            errorLabel.setText(dialogBundle.getString("sensor"));
+            accept.setEnabled(false);
+        } else {
+            errorLabel.setText("");
+            accept.setEnabled(true);
+        }
     }
 
 }

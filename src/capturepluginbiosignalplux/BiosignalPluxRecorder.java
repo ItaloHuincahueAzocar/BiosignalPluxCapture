@@ -16,9 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.microedition.io.Connector;
-import javax.microedition.io.StreamConnection;
+import java.util.logging.Logger; 
 import javax.swing.JOptionPane;
 import mo.organization.FileDescription;
 import mo.organization.Participant;
@@ -45,7 +43,7 @@ public class BiosignalPluxRecorder {
     private int samplerate = 100;
     
     //canales que lee
-    final int[] analogs = {0, 1, 2, 3};
+    final int[] analogs = {0};
     long resume = 0;
     long pause;
     
@@ -129,8 +127,11 @@ public class BiosignalPluxRecorder {
         Process p = null;
 
         try {
-            p = rt.exec("C:\\Users\\Italo\\Documents\\NetBeansProjects\\CapturePluginBiosignalPlux\\OneDeviceAcquisitionExample.exe --mac \"" + MAC + "\" --duration " + duration + " --frequency " + frequency + " --code \"" + code + "\" ");
-
+            p = rt.exec("C:\\Users\\Italo\\Documents\\NetBeansProjects\\"
+                    + "CapturePluginBiosignalPlux\\"
+                    + "OneDeviceAcquisitionExample.exe --mac \"" + MAC + "\" --duration " + duration + " --frequency " + frequency + " --code \"" + code + "\" ");
+            JOptionPane.showMessageDialog(null, "Comienza la captura", "BiosignalPlux", JOptionPane.ERROR_MESSAGE);
+            
             // Leer la salida del proceso
             BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line;
